@@ -444,6 +444,7 @@ router.post('/', async (request, response) => {
   }))
 
   const fallbackResponse = {
+    scenario,
     severity: protocol.severity,
     condition: protocol.condition[language] || protocol.condition.en,
     steps,
