@@ -10,11 +10,11 @@ function formatMinutes(value) {
   return `${minutes}:${seconds}`
 }
 
-export function SymptomTracker({ copy, triage, onSubmitCheckIn, timeline, speak, forceEscalation }) {
+export function SymptomTracker({ copy, triage, checkQuestions, onSubmitCheckIn, timeline, speak, forceEscalation }) {
   const MotionDiv = motion.div
   const [seconds, setSeconds] = useState(120)
   const [open, setOpen] = useState(false)
-  const [answers, setAnswers] = useState([null, null, null, null])
+  const [answers, setAnswers] = useState(() => Array(checkQuestions.length).fill(null))
 
   const allAnswered = useMemo(() => answers.every((item) => item !== null), [answers])
 
@@ -22,8 +22,8 @@ export function SymptomTracker({ copy, triage, onSubmitCheckIn, timeline, speak,
     if (!triage) return
     setSeconds(120)
     setOpen(false)
-    setAnswers([null, null, null, null])
-  }, [triage?.condition, triage?.severity, triage?.reportSummary])
+    setAnswers(Array(checkQuestions.length).fill(null))
+  }, [checkQuestions, triage?.condition, triage?.severity, triage?.reportSummary])
 
   useEffect(() => {
     if (!triage) return undefined
@@ -57,7 +57,7 @@ export function SymptomTracker({ copy, triage, onSubmitCheckIn, timeline, speak,
     onSubmitCheckIn(answers)
     setOpen(false)
     setSeconds(120)
-    setAnswers([null, null, null, null])
+    setAnswers(Array(checkQuestions.length).fill(null))
   }
 
   return (
@@ -108,7 +108,7 @@ export function SymptomTracker({ copy, triage, onSubmitCheckIn, timeline, speak,
             <DialogDescription>{triage.condition}</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4">
-            {copy.checkQuestions.map((question, index) => (
+            {checkQuestions.map((question, index) => (
               <div key={question} className="rounded-[20px] border border-white/10 bg-black/15 p-4">
                 <div className="mb-3 text-white">{question}</div>
                 <div className="grid grid-cols-2 gap-3">
