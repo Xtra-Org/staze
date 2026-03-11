@@ -8,7 +8,7 @@ import { api } from '@/lib/api'
 import { useSession } from '@/hooks/useSession'
 import { useLocation } from '@/hooks/useLocation'
 import { useVoice } from '@/hooks/useVoice'
-import { t, offlineScenarioInputs, quickScenarioKeys } from '@/translations'
+import { t, getScenarioCheckQuestions, offlineScenarioInputs, quickScenarioKeys } from '@/translations'
 import { Header } from '@/components/Header'
 import { EmergencyInput } from '@/components/EmergencyInput'
 import { QuickChips } from '@/components/QuickChips'
@@ -46,6 +46,7 @@ function AppShell() {
   const [speechRate, setSpeechRate] = useState(0.85)
   const [escalation, setEscalation] = useState(false)
   const copy = t[language]
+  const checkQuestions = useMemo(() => getScenarioCheckQuestions(language, triage?.scenario), [language, triage?.scenario])
   const voice = useVoice(language, speechRate)
 
   useEffect(() => {
@@ -193,9 +194,9 @@ function AppShell() {
     addTimeline(negativeCount >= 3 ? 'Symptoms worsening' : 'Check-in completed', negativeCount >= 3 ? 'red' : 'amber')
     if (negativeCount >= 3) setEscalation(true)
     const baseEmergency = stripSymptomUpdates(emergency || session.emergency || '')
-    const symptomPrompt = `${baseEmergency} Symptom update: ${answers.map((item, index) => `${copy.checkQuestions[index]}=${item ? 'yes' : 'no'}`).join(', ')}`
+    const symptomPrompt = `${baseEmergency} Symptom update: ${answers.map((item, index) => `${checkQuestions[index]}=${item ? 'yes' : 'no'}`).join(', ')}`
     await submitEmergency(symptomPrompt, { preserveProgress: true, sessionEmergency: baseEmergency })
-  }, [addTimeline, copy.checkQuestions, emergency, session.emergency, session.symptomAnswers, submitEmergency, updateSession])
+  }, [addTimeline, checkQuestions, emergency, session.emergency, session.symptomAnswers, submitEmergency, updateSession])
 
   const handleGenerateReport = useCallback(async () => {
     const result = await api.report({ session })
@@ -240,7 +241,7 @@ function AppShell() {
             <TriageResponse copy={copy} triage={triage} completedSteps={session.completedSteps || []} stepCompletions={session.stepCompletions || {}} onCompleteStep={handleCompleteStep} onStartCpr={() => setCprActive(true)} speak={voice.speak} />
             <BystanderRoles copy={copy} roles={triage?.roles} onReshuffle={reshuffleRoles} />
             <HospitalMap copy={copy} coords={coords} hospitals={hospitals} loading={hospitalLoading} online={online} locationStatus={locationStatus} manualCity={manualCity} setManualCity={setManualCity} />
-            <SymptomTracker copy={copy} triage={triage} onSubmitCheckIn={handleCheckIn} timeline={session.timeline || []} speak={voice.speak} forceEscalation={() => setEscalation(true)} />
+            <SymptomTracker copy={copy} triage={triage} checkQuestions={checkQuestions} onSubmitCheckIn={handleCheckIn} timeline={session.timeline || []} speak={voice.speak} forceEscalation={() => setEscalation(true)} />
             {escalation ? (
               <AnimatePresence>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[65] flex items-center justify-center bg-red-950/80 p-4">
