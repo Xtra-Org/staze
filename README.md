@@ -41,6 +41,9 @@ Why it matters:
 - local session persistence and offline fallback scenarios
 - doctor handoff / incident report generation
 
+## Demo Video
+- https://drive.google.com/file/d/1JdQBqKalNzffwlDi1Z5r8UEjrk9P7okw/view?usp=sharing
+
 ## Tech stack
 
 ### Frontend
