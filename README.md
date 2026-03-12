@@ -42,7 +42,7 @@ Why it matters:
 - doctor handoff / incident report generation
 
 ## Demo Video
-- https://drive.google.com/file/d/1JdQBqKalNzffwlDi1Z5r8UEjrk9P7okw/view?usp=sharing
+ https://drive.google.com/file/d/1JdQBqKalNzffwlDi1Z5r8UEjrk9P7okw/view?usp=sharing
 
 ## Tech stack
 
